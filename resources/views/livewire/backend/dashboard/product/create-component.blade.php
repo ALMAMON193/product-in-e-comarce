@@ -46,32 +46,41 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <x-form.input id="name" label="Product Name *" wireModel="name" :error="$errors->first('name')"
+                        placeholder="Enter product name"
                         class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+
                     <x-form.input id="sku" label="SKU *" wireModel="sku" :error="$errors->first('sku')"
+                        placeholder="Enter SKU code"
                         class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
-                    <x-form.input id="short_description" label="Short Description" wireModel="short_description"
-                        :error="$errors->first('short_description')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
-                    <x-form.textarea id="description" label="Description" wireModel="description" :error="$errors->first('description')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+
                     <x-form.input id="weight" type="number" step="0.01" label="Weight (Kg)" wireModel="weight"
-                        :error="$errors->first('weight')"
+                        :error="$errors->first('weight')" placeholder="Enter weight in Kg"
                         class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+
                     <x-form.input id="length" type="number" step="0.01" label="Length (cm)" wireModel="length"
-                        :error="$errors->first('length')"
+                        :error="$errors->first('length')" placeholder="Enter length in cm"
                         class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+
                     <x-form.input id="width" type="number" step="0.01" label="Width (cm)" wireModel="width"
-                        :error="$errors->first('width')"
+                        :error="$errors->first('width')" placeholder="Enter width in cm"
                         class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+
                     <x-form.input id="height" type="number" step="0.01" label="Height (cm)" wireModel="height"
-                        :error="$errors->first('height')"
+                        :error="$errors->first('height')" placeholder="Enter height in cm"
                         class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
-                    <x-form.input id="tags" label="Tags Product" wireModel="tags" :error="$errors->first('tags')"
-                        placeholder="tag1, tag2, tag3"
+
+                    <x-form.textarea id="short_description" label="Short Description" wireModel="short_description"
+                        :error="$errors->first('short_description')" placeholder="Write a short description..."
                         class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+
+                    <x-form.textarea id="description" label="Description" wireModel="description" :error="$errors->first('description')"
+                        placeholder="Write full product description..."
+                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+
                     <x-form.switch-toggle label="Featured Product" wireModel="is_featured" :error="$errors->first('is_featured')"
                         class="text-indigo-600" />
                 </div>
+
             </section>
 
             <!-- Pricing & Stock -->
@@ -86,27 +95,35 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                     <x-form.input id="price" type="number" step="0.01" label="Regular Price" wireModel="price"
-                        :error="$errors->first('price')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+                        :error="$errors->first('price')" placeholder="Enter regular price"
+                        class="border-gray-300 focus:ring-green-500 focus:border-green-500 rounded-lg" />
+
                     <x-form.input id="sale_price" type="number" step="0.01" label="Sale Price"
-                        wireModel="sale_price" :error="$errors->first('sale_price')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+                        wireModel="sale_price" :error="$errors->first('sale_price')" placeholder="Enter sale price"
+                        class="border-gray-300 focus:ring-green-500 focus:border-green-500 rounded-lg" />
+
                     <x-form.input id="cost_price" type="number" step="0.01" label="Cost Price"
-                        wireModel="cost_price" :error="$errors->first('cost_price')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
-                    <x-form.input id="stock_quantity" type="number" label="Stock Quantity" wireModel="stock_quantity"
-                        :error="$errors->first('stock_quantity')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+                        wireModel="cost_price" :error="$errors->first('cost_price')" placeholder="Enter cost price"
+                        class="border-gray-300 focus:ring-green-500 focus:border-green-500 rounded-lg" />
+
+                    <x-form.input id="stock_quantity" type="number" label="Stock Quantity"
+                        wireModel="stock_quantity" :error="$errors->first('stock_quantity')" placeholder="Enter stock quantity"
+                        class="border-gray-300 focus:ring-green-500 focus:border-green-500 rounded-lg" />
+
                     <x-form.select id="stock_status" label="Stock Status" wireModel="stock_status" :error="$errors->first('stock_status')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg">
-                        <option value="in_stock">In Stock</option>
-                        <option value="out_of_stock">Out of Stock</option>
-                        <option value="preorder">Preorder</option>
-                    </x-form.select>
+                        :options="[
+                            'in_stock' => 'In Stock',
+                            'out_of_stock' => 'Out of Stock',
+                            'preorder' => 'Preorder',
+                        ]"
+                        class="border-gray-300 focus:ring-green-200 focus:border-green-200 rounded-lg" />
+
+
                     <x-form.input id="sort_order" type="number" label="Sort Order" wireModel="sort_order"
-                        :error="$errors->first('sort_order')"
-                        class="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg" />
+                        :error="$errors->first('sort_order')" placeholder="Enter sort order"
+                        class="border-gray-300 focus:ring-green-500 focus:border-green-500 rounded-lg" />
                 </div>
+
             </section>
 
             <!-- Additional Settings -->
@@ -269,10 +286,48 @@
                             @endforeach
                         </div>
                     </div>
-
                 </div>
             </section>
+            <!-- ===== Product Tags Section ===== -->
+            <section
+                class="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex items-center space-x-4 pb-4 border-b border-gray-200">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">4</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Product Tags</h3>
+                </div>
 
+                <div class="mt-6 space-y-4">
+                    @foreach ($tags as $index => $tag)
+                        <div class="flex items-center space-x-3">
+                            <input type="text" wire:model="tags.{{ $index }}" placeholder="Tag name"
+                                class=" w-full px-3 py-1.5 border border-indigo-200 rounded-md focus:ring-1 focus:ring-indigo-500
+                 focus:border-transparent transition-all duration-300 bg-white hover:border-gray-400
+                 placeholder-gray-400" />
+                            @if (count($tags) > 1)
+                                <button type="button" wire:click="removeTagField({{ $index }})"
+                                    class="text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200 p-2 rounded-lg transform hover:scale-110">
+                                    <i class="fas fa-trash-alt text-sm"></i>
+                                </button>
+                            @endif
+
+                            @error('tags.' . $index)
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @endforeach
+
+                    <button type="button" wire:click="addTagField"
+                        class="px-2 py-1 mt-2 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-700 flex items-center space-x-1">
+                        <i class="fas fa-plus text-[10px]"></i>
+                        <span>Add More</span>
+                    </button>
+
+                </div>
+
+            </section>
         </div>
 
         <!-- Right Side: Category Section -->
@@ -289,12 +344,12 @@
                 class="flex-1 overflow-y-auto space-y-3 max-h-[500px] pr-3 scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-gray-50">
                 @foreach ($categories as $category)
                     <div
-                        class="border border-gray-200 rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md">
+                        class="border border-gray-200 rounded-md overflow-hidden transition-all duration-200 hover:shadow-md">
                         <!-- Category Header -->
-                        <div class="flex items-center justify-between p-4 bg-gray-50 hover:bg-indigo-50 cursor-pointer transition-colors duration-200"
+                        <div class="flex items-center justify-between p-2 bg-gray-50 hover:bg-indigo-50 cursor-pointer transition-colors duration-200"
                             wire:click="toggleCategory({{ $category->id }})">
                             <div class="flex items-center space-x-4">
-                                <div class="w-6 h-6 flex items-center justify-center">
+                                <div class="w-3 h-3 flex items-center justify-center">
                                     @if (in_array($category->id, $expandedCategories))
                                         <i class="fas fa-minus text-indigo-500 text-sm"></i>
                                     @else
@@ -303,7 +358,7 @@
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="category_{{ $category->id }}"
-                                        class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
+                                        class="w-3 h-3 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-1"
                                         {{ isset($selectedSubCategoriesMultiple[$category->id]) && !empty($selectedSubCategoriesMultiple[$category->id]) ? 'checked' : '' }}
                                         disabled>
                                     <label for="category_{{ $category->id }}"
@@ -327,9 +382,9 @@
                                     <div class="max-h-48 overflow-y-auto">
                                         @foreach ($category->subCategories as $subCategory)
                                             <div
-                                                class="flex items-center space-x-4 p-4 hover:bg-indigo-50 border-b border-gray-100 last:border-b-0 transition-colors duration-200">
-                                                <div class="w-6 h-6 flex items-center justify-center">
-                                                    <div class="w-5 h-5 border-2 border-indigo-300 rounded-full flex items-center justify-center cursor-pointer hover:border-indigo-500 transition-colors duration-200"
+                                                class="flex items-center space-x-4 p-2 hover:bg-indigo-50 border-b border-gray-100 last:border-b-0 transition-colors duration-200">
+                                                <div class="w-4 h-4 flex items-center justify-center">
+                                                    <div class="w-4 h-4 border-2 border-indigo-300 rounded-full flex items-center justify-center cursor-pointer hover:border-indigo-500 transition-colors duration-200"
                                                         wire:click="toggleSubCategory({{ $category->id }}, {{ $subCategory->id }})">
                                                         @if (isset($selectedSubCategoriesMultiple[$category->id]) &&
                                                                 in_array($subCategory->id, $selectedSubCategoriesMultiple[$category->id]))
@@ -394,6 +449,17 @@
                     <i class="fas fa-undo mr-2 text-gray-600"></i>
                     Reset
                 </button>
+                <button type="submit"
+                    class="px-8 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white transition-all duration-200 transform hover:scale-105 shadow-xl flex items-center font-semibold">
+                    <span wire:loading.remove wire:target="save">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Product
+                    </span>
+                    <span wire:loading wire:target="save" class="flex items-center">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        Saving...
+                    </span>
+                </button>
                 @if (!empty($selectedSubCategoriesMultiple))
                     <div class="flex items-center space-x-2 text-sm text-indigo-600 font-medium">
                         <i class="fas fa-check-circle text-indigo-500"></i>
@@ -402,17 +468,6 @@
                     </div>
                 @endif
             </div>
-            <button type="submit"
-                class="px-8 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white transition-all duration-200 transform hover:scale-105 shadow-xl flex items-center font-semibold">
-                <span wire:loading.remove wire:target="save">
-                    <i class="fas fa-save mr-2"></i>
-                    Save Product
-                </span>
-                <span wire:loading wire:target="save" class="flex items-center">
-                    <i class="fas fa-spinner fa-spin mr-2"></i>
-                    Saving...
-                </span>
-            </button>
         </div>
     </form>
 </main>

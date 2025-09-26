@@ -1,4 +1,5 @@
 <main class="flex-1 overflow-auto p-4 lg:p-6 bg-gradient-to-br from-gray-100 to-gray-200" role="main">
+
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-4 lg:mb-6">
         <ol class="flex items-center space-x-2 text-sm text-gray-500">
@@ -14,19 +15,22 @@
             </li>
         </ol>
     </nav>
+
     <!-- Success Message -->
     @if (session()->has('message'))
-        <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl animate-fade-in">
+        <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl animate-fade-in mb-3">
             <p class="text-green-600 text-sm flex items-center">
                 <i class="fas fa-check-circle mr-2"></i> {{ session('message') }}
             </p>
         </div>
     @endif
+
     <!-- Form -->
     <form wire:submit.prevent="save" class="space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
             <section
                 class="lg:col-span-4 bg-white/95 rounded-xl shadow-2xl p-6 border border-gray-100/50 backdrop-blur-sm">
+
                 <!-- Header -->
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center space-x-3">
@@ -43,9 +47,10 @@
 
                 <!-- Dynamic Categories -->
                 @foreach ($categories as $index => $category)
-                    <div
+                    <div wire:key="category-{{ $index }}"
                         class="mb-8 bg-gradient-to-r from-gray-50/80 to-blue-50/50 rounded-xl p-6 border border-gray-200/60 shadow-sm hover:shadow-md transition-all duration-300 space-y-6">
-                        <!-- Category Header -->
+
+                        <!-- Header + Remove -->
                         <div class="flex items-center justify-between pb-4 border-b border-gray-200/60">
                             <div class="flex items-center space-x-3">
                                 <div
@@ -65,23 +70,56 @@
                         <!-- Title -->
                         <x-form.input id="name-{{ $index }}" label="Title *" icon="tag"
                             wireModel="categories.{{ $index }}.name" :error="$errors->first('categories.' . $index . '.name')" />
+
                         <!-- Description -->
                         <x-form.textarea id="description-{{ $index }}" label="Description" icon="align-left"
                             wireModel="categories.{{ $index }}.description" :error="$errors->first('categories.' . $index . '.description')" />
 
                         <!-- Image Upload -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-medium mb-2 flex items-center">
+                                Image <span class="text-red-500 ml-1">*</span>
+                                <i class="fas fa-info-circle ml-2 text-gray-400 hover:text-gray-600 cursor-help"
+                                    title="Upload an image for the project"></i>
+                            </label>
 
+                            <label
+                                class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors @error('categories.' . $index . '.image') border-red-500 @enderror">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    @if (!empty($category['image']) && method_exists($category['image'], 'temporaryUrl'))
+                                        <img src="{{ $category['image']->temporaryUrl() }}"
+                                            class="w-32 h-32 object-cover rounded-lg mb-2">
+                                    @else
+                                        <svg class="w-6 h-6 mb-2 text-gray-500" fill="none" viewBox="0 0 20 16">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                        </svg>
+                                        <p class="mb-1 text-xs text-gray-500"><span class="font-semibold">Click to
+                                                upload</span> or drag and drop</p>
+                                    @endif
+                                </div>
+                                <input type="file" wire:model="categories.{{ $index }}.image"
+                                    accept="image/*" class="hidden" />
+                            </label>
+
+                            @error('categories.' . $index . '.image')
+                                <p class="mt-1 text-sm text-red-500 flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
                         <!-- Featured + Sort Order -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <x-form.switch-toggle label="Featured Category"
-                                wireModel="categories.{{ $index }}.is_featured" :checked="isset($categories[$index]['is_featured']) &&
-                                    $categories[$index]['is_featured']" />
+                                wireModel="categories.{{ $index }}.is_featured" :checked="$category['is_featured'] ?? false" />
 
                             <x-form.input id="sort-order-{{ $index }}" label="Sort Order" icon="sort-numeric-up"
                                 type="number" wireModel="categories.{{ $index }}.sort_order"
                                 :error="$errors->first('categories.' . $index . '.sort_order')" />
                         </div>
+
                     </div>
                 @endforeach
 
@@ -101,6 +139,7 @@
                         </p>
                     </div>
                 @enderror
+
             </section>
         </div>
     </form>

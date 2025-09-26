@@ -1,24 +1,37 @@
 @props(['id', 'label', 'icon' => null, 'type' => 'text', 'error' => null, 'wireModel'])
 
 <div class="space-y-2">
-    <label for="{{ $id }}" class="block font-medium text-gray-800 flex items-center">
+    {{-- Label --}}
+    <label for="{{ $id }}" class="block font-medium text-gray-700 flex items-center text-sm">
         @if ($icon)
-            <i class="fas fa-{{ $icon }} text-blue-500 mr-2"></i>
+            <i class="fas fa-{{ $icon }} text-green-500 mr-2 text-xs"></i>
         @endif
         {{ $label }}
     </label>
 
+    {{-- Small Input --}}
     <input id="{{ $id }}" type="{{ $type }}"
         {{ $attributes->merge([
             'class' =>
-                'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500
-                                 focus:border-transparent transition-all duration-300 bg-white hover:border-gray-400
-                                 placeholder-gray-400 ' . ($error ? 'border-red-400 ring-2 ring-red-100' : ''),
+                '
+                                                                                w-full px-3 py-1.5
+                                                                                text-sm text-gray-800
+                                                                                border border-indigo-200
+                                                                                rounded-md
+                                                                                bg-white
+                                                                                placeholder-gray-400
+                                                                                shadow-sm
+                                                                                focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300
+                                                                                hover:border-gray-400
+                                                                                transition-all duration-200 ease-in-out
+                                                                            ' .
+                ($error ? ' border-red-400 ring-2 ring-red-100' : ''),
         ]) }}
         wire:model.defer="{{ $wireModel }}">
 
+    {{-- Error Message --}}
     @if ($error)
-        <p class="text-red-500 text-sm mt-1 flex items-center animate-pulse">
+        <p class="text-red-500 text-xs mt-1 flex items-center animate-fade-in">
             <i class="fas fa-exclamation-circle mr-1"></i> {{ $error }}
         </p>
     @endif

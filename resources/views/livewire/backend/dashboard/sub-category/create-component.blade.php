@@ -45,7 +45,7 @@
 
                 <!-- Dynamic SubCategories -->
                 @foreach ($subCategories as $index => $subCategory)
-                    <div class="bg-white p-6 rounded-xl shadow mb-6">
+                    <div wire:key="subcat-{{ $index }}" class="bg-white p-6 rounded-xl shadow mb-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-lg">SubCategory {{ $index + 1 }}</h3>
                             @if (count($subCategories) > 1)
@@ -60,24 +60,55 @@
                             :error="$errors->first('subCategories.' . $index . '.category_id')" />
 
                         <!-- Title -->
-                        <x-form.input id="name-{{ $index }}" label="Title"
+                        <x-form.input id="name-{{ $index }}" label="Title" placeholder="Enter subcategory title"
                             wireModel="subCategories.{{ $index }}.name" :error="$errors->first('subCategories.' . $index . '.name')" />
 
                         <!-- Description -->
                         <x-form.textarea id="description-{{ $index }}" label="Description"
+                            placeholder="Enter a brief description"
                             wireModel="subCategories.{{ $index }}.description" />
-
                         <!-- Image Upload -->
-                        <x-form.file-upload id="image-{{ $index }}" label="Image"
-                            wireModel="subCategories.{{ $index }}.image" :preview="isset($subCategories[$index]['image'])
-                                ? $subCategories[$index]['image']->temporaryUrl()
-                                : null" />
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-medium mb-2 flex items-center">
+                                Image <span class="text-red-500 ml-1">*</span>
+                                <i class="fas fa-info-circle ml-2 text-gray-400 hover:text-gray-600 cursor-help"
+                                    title="Upload an image for the project"></i>
+                            </label>
+
+                            <label
+                                class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors @error('subCategories.' . $index . '.image') border-red-500 @enderror">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    @if ($subCategory['image'] ?? false)
+                                        <img src="{{ $subCategory['image']->temporaryUrl() }}"
+                                            class="w-32 h-32 object-cover rounded-lg mb-2">
+                                    @else
+                                        <svg class="w-6 h-6 mb-2 text-gray-500" fill="none" viewBox="0 0 20 16">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                        </svg>
+                                        <p class="mb-1 text-xs text-gray-500"><span class="font-semibold">Click to
+                                                upload</span> or drag and drop</p>
+                                        <p class="text-[10px] text-gray-400">Any image format (max 100 MB)</p>
+                                    @endif
+                                </div>
+                                <input type="file" wire:model="subCategories.{{ $index }}.image"
+                                    accept="image/*" class="hidden" />
+                            </label>
+
+                            @error('subCategories.' . $index . '.image')
+                                <p class="mt-1 text-sm text-red-500 flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
                         <!-- Featured + Sort Order -->
                         <x-form.switch-toggle label="Featured"
                             wireModel="subCategories.{{ $index }}.is_featured" />
+                        <!-- Sort Order -->
                         <x-form.input id="sort-order-{{ $index }}" label="Sort Order" type="number"
-                            wireModel="subCategories.{{ $index }}.sort_order" />
+                            placeholder="0" wireModel="subCategories.{{ $index }}.sort_order" />
                     </div>
                 @endforeach
 

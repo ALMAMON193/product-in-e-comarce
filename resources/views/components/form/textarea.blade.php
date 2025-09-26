@@ -10,9 +10,10 @@
     <textarea id="{{ $id }}" rows="3"
         {{ $attributes->merge([
             'class' =>
-                'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500
-                                focus:border-transparent transition-all duration-300 bg-white hover:border-gray-400
-                                placeholder-gray-400 resize-none ' . ($error ? 'border-red-400 ring-2 ring-red-100' : ''),
+                'w-full px-4 py-3 border border-indigo-200 rounded-md focus:ring-1 focus:ring-green-500
+                                                                focus:border-transparent transition-all duration-300 bg-white hover:border-indigo-300
+                                                                placeholder-gray-400 resize-none ' .
+                ($error ? 'border-red-400 ring-1 ring-red-100' : ''),
         ]) }}
         wire:model.defer="{{ $wireModel }}"></textarea>
     @if ($error)

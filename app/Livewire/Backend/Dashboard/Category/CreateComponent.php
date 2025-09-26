@@ -12,9 +12,7 @@ class CreateComponent extends Component
 {
     use WithFileUploads;
 
-    public $categories = [
-        ['name' => '', 'description' => '', 'is_featured' => false, 'sort_order' => 0, 'image' => null],
-    ];
+    public $categories = [];
 
     protected $rules = [
         'categories.*.name' => 'required|string|max:255|unique:categories,name',
@@ -23,6 +21,17 @@ class CreateComponent extends Component
         'categories.*.sort_order' => 'integer|min:0',
         'categories.*.image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
     ];
+
+    public function mount()
+    {
+        $this->categories[] = [
+            'name' => '',
+            'description' => '',
+            'is_featured' => false,
+            'sort_order' => 0,
+            'image' => null,
+        ];
+    }
 
     public function addCategory()
     {
@@ -47,17 +56,10 @@ class CreateComponent extends Component
     {
         $this->validate();
 
-        if (empty($this->categories)) {
-            $this->addError('categories', 'At least one category is required.');
-
-            return;
-        }
-
         foreach ($this->categories as $categoryData) {
             if (! empty($categoryData['name'])) {
-                $imagePath = null;
 
-                // If image exists, upload it via Helper
+                $imagePath = null;
                 if (! empty($categoryData['image'])) {
                     $imagePath = Helper::uploadFile('categories', $categoryData['image']);
                 }
@@ -75,7 +77,7 @@ class CreateComponent extends Component
 
         session()->flash('message', 'Categories created successfully!');
 
-        $this->reset('categories');
+        // Reset categories
         $this->categories = [
             ['name' => '', 'description' => '', 'is_featured' => false, 'sort_order' => 0, 'image' => null],
         ];

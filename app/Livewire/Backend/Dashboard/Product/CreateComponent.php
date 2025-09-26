@@ -24,6 +24,9 @@ class CreateComponent extends Component
     // Collapsible multi-category
     public $expandedCategories = [];
 
+    // tag
+    public $tags = ['']; // Initialize with one empty tag field
+
     public $selectedSubCategoriesMultiple = []; // [category_id => [sub_category_id, ...]]
 
     // Product fields
@@ -46,8 +49,6 @@ class CreateComponent extends Component
     public $width = null;
 
     public $height = null;
-
-    public $tags = '';
 
     public $price = null;
 
@@ -83,7 +84,8 @@ class CreateComponent extends Component
             'length' => 'nullable|numeric|min:0|max:9999.99',
             'width' => 'nullable|numeric|min:0|max:9999.99',
             'height' => 'nullable|numeric|min:0|max:9999.99',
-            'tags' => 'nullable|string|max:1000',
+            'tags' => 'required|array|min:4|max:20',
+            'tags.*' => 'nullable|string|max:255',
             'price' => 'nullable|numeric|min:0|max:999999.99',
             'sale_price' => 'nullable|numeric|min:0|max:999999.99|lt:price',
             'cost_price' => 'nullable|numeric|min:0|max:999999.99',
@@ -96,11 +98,31 @@ class CreateComponent extends Component
         ];
     }
 
+    protected function messages()
+    {
+        return [
+            'tags.required' => 'At least four product tags are required.',
+            'tags.min' => 'Please provide at least four product tags.',
+            'tags.*.max' => 'Each tag must not exceed 255 characters.',
+        ];
+    }
+
     public function mount()
     {
         $this->categories = Category::where('status', 'active')->orderBy('sort_order')->orderBy('name')->get();
         $this->subCategories = collect();
         $this->validationState = [];
+    }
+
+    public function addTagField()
+    {
+        $this->tags[] = '';
+    }
+
+    public function removeTagField($index)
+    {
+        unset($this->tags[$index]);
+        $this->tags = array_values($this->tags);
     }
 
     public function toggleCategory($categoryId)
@@ -190,12 +212,13 @@ class CreateComponent extends Component
             }
 
             if (! empty($this->tags)) {
-                $tags = array_filter(array_map('trim', explode(',', $this->tags)));
-                foreach ($tags as $tag) {
-                    ProductTag::create([
-                        'product_id' => $product->id,
-                        'name' => $tag,
-                    ]);
+                foreach ($this->tags as $tag) {
+                    if (trim($tag) !== '') {
+                        ProductTag::create([
+                            'product_id' => $product->id,
+                            'name' => trim($tag),
+                        ]);
+                    }
                 }
             }
 
@@ -227,6 +250,7 @@ class CreateComponent extends Component
         $this->stock_status = 'in_stock';
         $this->stock_quantity = 0;
         $this->sort_order = 0;
+        $this->tags = ['']; // Reset tags to array with one empty string
 
         $this->resetErrorBag();
     }
