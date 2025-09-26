@@ -44,7 +44,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href=""
+                        <a href="{{ route('categories.create') }}" wire:navigate
                             class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
                             <i class="fas fa-plus w-4 mr-2"></i> Add Category
                         </a>
@@ -56,7 +56,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href=""
+                        <a href="{{ route('sub.categories.create') }}" wire:navigate
                             class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
                             <i class="fas fa-folder-plus w-4 mr-2"></i> Add Sub-Category
                         </a>
@@ -68,16 +68,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href=""
+                        <a href="{{ route('product.create') }}" wire:navigate
                             class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
                             <i class="fas fa-box w-4 mr-2"></i> Add Product
                         </a>
                     </li>
                 </ul>
             </li>
-
-
-
         </ul>
     </nav>
 

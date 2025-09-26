@@ -2,141 +2,105 @@
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-4 lg:mb-6">
         <ol class="flex items-center space-x-2 text-sm text-gray-500">
-            <li><a href="{{ route('dashboard') }}" class="hover:text-indigo-500 transition-colors duration-200">Home</a>
+            <li>
+                <a href="{{ route('dashboard') }}"
+                    class="hover:text-indigo-500 transition-colors duration-200 flex items-center">
+                    <i class="fas fa-home mr-1"></i>Home
+                </a>
             </li>
             <li><i class="fas fa-chevron-right text-xs text-gray-400"></i></li>
-            <li class="text-gray-800 font-semibold">Create Project Category</li>
+            <li class="text-gray-800 font-semibold flex items-center">
+                <i class="fas fa-layer-group mr-1"></i>Create Project Category
+            </li>
         </ol>
     </nav>
-
+    <!-- Success Message -->
+    @if (session()->has('message'))
+        <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl animate-fade-in">
+            <p class="text-green-600 text-sm flex items-center">
+                <i class="fas fa-check-circle mr-2"></i> {{ session('message') }}
+            </p>
+        </div>
+    @endif
     <!-- Form -->
     <form wire:submit.prevent="save" class="space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
             <section
                 class="lg:col-span-4 bg-white/95 rounded-xl shadow-2xl p-6 border border-gray-100/50 backdrop-blur-sm">
-                <h2 class="text-2xl font-bold mb-6 text-gray-900 tracking-tight">Project Category</h2>
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-layer-group text-white text-lg"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Project Category</h2>
+                    </div>
+                    <div class="text-sm bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">
+                        {{ count($categories) }} {{ count($categories) === 1 ? 'Category' : 'Categories' }}
+                    </div>
+                </div>
 
+                <!-- Dynamic Categories -->
                 @foreach ($categories as $index => $category)
-                    <div class="mb-6 space-y-4 border-b border-gray-200 pb-4 last:border-b-0">
-                        <!-- Name Field -->
-                        <div class="flex items-center">
-                            <div class="flex-1">
-                                <label for="name-{{ $index }}" class="block font-medium mb-2 text-gray-800">
-                                    Title <span class="text-red-400 ml-1">*</span>
-                                </label>
-                                <input type="text" id="name-{{ $index }}"
-                                    wire:model.defer="categories.{{ $index }}.name"
-                                    placeholder="Enter category name"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-300 bg-gray-50 hover:bg-white @error('categories.' . $index . '.name') border-red-400 @enderror">
-                                @error('categories.' . $index . '.name')
-                                    <p class="text-red-400 text-sm mt-1 flex items-center">
-                                        <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
-                                    </p>
-                                @enderror
+                    <div
+                        class="mb-8 bg-gradient-to-r from-gray-50/80 to-blue-50/50 rounded-xl p-6 border border-gray-200/60 shadow-sm hover:shadow-md transition-all duration-300 space-y-6">
+                        <!-- Category Header -->
+                        <div class="flex items-center justify-between pb-4 border-b border-gray-200/60">
+                            <div class="flex items-center space-x-3">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">{{ $index + 1 }}</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-800">Category {{ $index + 1 }}</h3>
                             </div>
                             @if (count($categories) > 1)
                                 <button type="button" wire:click="removeCategory({{ $index }})"
-                                    class="ml-3 text-red-400 hover:text-red-500 transition-colors duration-200 p-2 rounded-full">
-                                    <i class="fas fa-trash-alt"></i>
+                                    class="text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200 p-2 rounded-lg transform hover:scale-110">
+                                    <i class="fas fa-trash-alt text-sm"></i>
                                 </button>
                             @endif
                         </div>
 
-                        <!-- Description Field -->
-                        <div>
-                            <label for="description-{{ $index }}" class="block font-medium mb-2 text-gray-800">
-                                Description
-                            </label>
-                            <textarea id="description-{{ $index }}" wire:model.defer="categories.{{ $index }}.description"
-                                placeholder="Enter category description"
-                                class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-300 bg-gray-50 hover:bg-white @error('categories.' . $index . '.description') border-red-400 @enderror"></textarea>
-                            @error('categories.' . $index . '.description')
-                                <p class="text-red-400 text-sm mt-1 flex items-center">
-                                    <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
+                        <!-- Title -->
+                        <x-form.input id="name-{{ $index }}" label="Title *" icon="tag"
+                            wireModel="categories.{{ $index }}.name" :error="$errors->first('categories.' . $index . '.name')" />
+                        <!-- Description -->
+                        <x-form.textarea id="description-{{ $index }}" label="Description" icon="align-left"
+                            wireModel="categories.{{ $index }}.description" :error="$errors->first('categories.' . $index . '.description')" />
 
-                        <!-- Image Field -->
-                        <div>
-                            <label for="image-{{ $index }}" class="block font-medium mb-2 text-gray-800">
-                                Image
-                            </label>
-                            <input type="file" id="image-{{ $index }}"
-                                wire:model="categories.{{ $index }}.image"
-                                class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-300 bg-gray-50 hover:bg-white @error('categories.' . $index . '.image') border-red-400 @enderror">
-                            @error('categories.' . $index . '.image')
-                                <p class="text-red-400 text-sm mt-1 flex items-center">
-                                    <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
-                                </p>
-                            @enderror
-                            @if (isset($categories[$index]['image']) && $categories[$index]['image'])
-                                <div class="mt-2">
-                                    <img src="{{ $categories[$index]['image']->temporaryUrl() }}" alt="Preview"
-                                        class="h-20 w-auto rounded">
-                                </div>
-                            @endif
-                        </div>
+                        <!-- Image Upload -->
 
-                        <!-- Is Featured and Sort Order -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="is-featured-{{ $index }}"
-                                    class="block font-medium mb-2 text-gray-800">
-                                    Featured
-                                </label>
-                                <input type="checkbox" id="is-featured-{{ $index }}"
-                                    wire:model.defer="categories.{{ $index }}.is_featured"
-                                    class="h-5 w-5 text-indigo-600 focus:ring-indigo-400 border-gray-300 rounded">
-                                @error('categories.' . $index . '.is_featured')
-                                    <p class="text-red-400 text-sm mt-1 flex items-center">
-                                        <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="sort-order-{{ $index }}"
-                                    class="block font-medium mb-2 text-gray-800">
-                                    Sort Order
-                                </label>
-                                <input type="number" id="sort-order-{{ $index }}"
-                                    wire:model.defer="categories.{{ $index }}.sort_order" placeholder="0"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-300 bg-gray-50 hover:bg-white @error('categories.' . $index . '.sort_order') border-red-400 @enderror">
-                                @error('categories.' . $index . '.sort_order')
-                                    <p class="text-red-400 text-sm mt-1 flex items-center">
-                                        <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
+
+                        <!-- Featured + Sort Order -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <x-form.switch-toggle label="Featured Category"
+                                wireModel="categories.{{ $index }}.is_featured" :checked="isset($categories[$index]['is_featured']) &&
+                                    $categories[$index]['is_featured']" />
+
+                            <x-form.input id="sort-order-{{ $index }}" label="Sort Order" icon="sort-numeric-up"
+                                type="number" wireModel="categories.{{ $index }}.sort_order"
+                                :error="$errors->first('categories.' . $index . '.sort_order')" />
                         </div>
                     </div>
                 @endforeach
 
-                <!-- Quick Add Button -->
-                <button type="button" wire:click="addCategory"
-                    class="mb-4 py-1.5 px-3 bg-gradient-to-r from-amber-400 to-amber-600 text-white rounded-full hover:from-amber-500 hover:to-amber-700 transition-all duration-300 shadow-sm hover:shadow-md text-xs font-medium">
-                    Quick Add
-                </button>
-
-                <!-- Save Category Button -->
-                <button type="submit"
-                    class="w-52 py-3 bg-gradient-to-r from-indigo-600 to-purple-700 text-white rounded-lg hover:from-indigo-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center font-semibold">
-                    <i class="fas fa-save mr-2"></i> Save Category
-                </button>
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <x-buttons.add wireClick="addCategory">Quick Add Category</x-buttons.add>
+                    <x-buttons.primary>
+                        Save {{ count($categories) }} {{ count($categories) === 1 ? 'Category' : 'Categories' }}
+                    </x-buttons.primary>
+                </div>
 
                 <!-- Validation Message if No Category -->
                 @error('categories')
-                    <p class="text-red-400 text-sm mt-2 flex items-center">
-                        <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
-                    </p>
+                    <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+                        <p class="text-red-600 text-sm flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i> {{ $message }}
+                        </p>
+                    </div>
                 @enderror
-
-                <!-- Success Message -->
-                @if (session()->has('message'))
-                    <p class="text-green-500 text-sm mt-2 flex items-center">
-                        <i class="fas fa-check-circle mr-1"></i> {{ session('message') }}
-                    </p>
-                @endif
             </section>
         </div>
     </form>
