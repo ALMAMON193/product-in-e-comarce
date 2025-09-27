@@ -3,7 +3,7 @@
         <ol class="flex items-center space-x-2 text-sm text-gray-600">
             <li><a href="#" class="hover:text-blue-600 transition-colors">Home</a></li>
             <li><i class="fas fa-chevron-right text-xs"></i></li>
-            <li class="text-gray-900 font-medium">categories</li>
+            <li class="text-gray-900 font-medium">products</li>
         </ol>
     </nav>
 
@@ -12,9 +12,9 @@
         <div class="p-4 lg:p-6 border-b border-gray-200">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div>
-                    <h3 class="text-lg lg:text-xl font-bold text-gray-800">All categories</h3>
+                    <h3 class="text-lg lg:text-xl font-bold text-gray-800">All products</h3>
                     <p class="text-sm text-gray-600 mt-1">Total <span
-                            class="font-semibold">{{ $subCategories->total() }}</span> categories found</p>
+                            class="font-semibold">{{ $products->total() }}</span> products found</p>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
@@ -27,7 +27,7 @@
                                     d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
                             </svg>
                         </span>
-                        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search categories"
+                        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search products"
                             class="w-full pl-9 lg:pl-10 pr-4 py-2 lg:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-transparent" />
                     </div>
 
@@ -54,7 +54,7 @@
                             <option value="100">100</option>
                         </select>
                     </div>
-                    <x-buttons.add :href="route('categories.create')" icon="plus" color="blue" navigate="true">
+                    <x-buttons.add :href="route('product.create')" icon="plus" color="blue" navigate="true">
                         Add New
                     </x-buttons.add>
                 </div>
@@ -72,65 +72,69 @@
                         </th>
                         <th
                             class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Name
-                        </th>
+                            Name</th>
+                        <th
+                            class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            SKU</th>
+                        <th
+                            class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Short Description</th>
 
                         <th
-                            class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                            Description
-                        </th>
+                            class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status</th>
                         <th
                             class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                            Status
-                        </th>
-                        <th
-                            class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                            Created
-                        </th>
+                            Created</th>
                         <th
                             class="px-4 lg:px-6 py-3 lg:py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
+                            Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($subCategories as $item)
+                    @forelse($products as $product)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td
+                                class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                                 <input type="checkbox"
                                     class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             </td>
-                            <td class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div class="text-sm font-medium text-gray-600">{{ $item->name }}</div>
+                            <td
+                                class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                                <div class="text-sm font-medium text-gray-600">{{ $product->name }}</div>
+                            </td>
+
+                            <td
+                                class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                                <div class="text-sm font-medium text-gray-600">{{ $product->sku }}</div>
                             </td>
                             <td
                                 class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                                <div class="text-sm text-gray-600">{{ $item->description ?? '-' }}</div>
+                                <div class="text-sm font-medium text-gray-600">{{ $product->short_description }}</div>
                             </td>
                             <td
                                 class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                                <span
-                                    class="px-2 py-1 rounded-full text-xs font-semibold {{ $item->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ ucfirst($item->status) }}
-                                </span>
+                                <div class="text-sm font-medium text-gray-600">{{ $product->status }}</div>
                             </td>
                             <td
                                 class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                                <div class="text-sm text-gray-600">{{ $item->created_at->format('M d, Y') }}</div>
+                                <div class="text-sm font-medium text-gray-600">
+                                    {{ $product->created_at->format('M d, Y') }}</div>
+
                             </td>
                             <td class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-center text-sm font-medium">
                                 <div class="flex items-center justify-center space-x-2">
-                                    <a href="" wire:navigate
+                                    <a href="{{ route('product.edit', $product->slug) }}" wire:navigate
                                         class="text-indigo-600 hover:text-indigo-900 transition-colors p-1"
                                         title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="" wire:navigate
+                                    <a href="{{ route('view.product', $product->slug) }}" wire:navigate
                                         class="text-indigo-600 hover:text-indigo-900 transition-colors p-1"
                                         title="View">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <button wire:click="delete({{ $item->id }})" wire:confirm="Are you sure?"
+                                    <button wire:click="delete({{ $product->id }})" wire:confirm="Are you sure?"
                                         class="text-red-600 hover:text-red-900 transition-colors p-1" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -138,9 +142,10 @@
                             </td>
                         </tr>
                     @empty
-                        <x-table-empty-state colspan="7" title="No categories Yet"
-                            message="No categories have been added yet!">
+                        <x-table-empty-state colspan="8" title="No Product Yet"
+                            message="No products have been placed yet!">
                             <x-slot name="icon">
+                                <!-- Premium Heroicons 'Exclamation Circle' -->
                                 <svg class="w-14 h-14 text-red-500 animate-bounce" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -152,11 +157,10 @@
                 </tbody>
             </table>
 
-
             <!-- Loading Overlay -->
             <x-loading-overlay />
         </div>
         <!-- Footer Pagination -->
-        <x-form.pagination :paginator="$subCategories" :pageRange="$pageRange" />
+        <x-form.pagination :paginator="$products" :pageRange="$pageRange" />
     </div>
 </main>

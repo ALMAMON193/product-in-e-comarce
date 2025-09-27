@@ -38,7 +38,7 @@
                 </div>
                 <ul x-show="open" x-transition class="mt-1 ml-6 pl-4  border-gray-700/40 space-y-1 text-sm">
                     <li>
-                        <a href=""
+                        <a href="{{ route('categories.index') }}" wire:navigate
                             class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
                             <i class="fas fa-list w-4 mr-2"></i> Category List
                         </a>
@@ -50,7 +50,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href=""
+                        <a href="{{ route('sub.categories.index') }}" wire:navigate
                             class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
                             <i class="fas fa-list-alt w-4 mr-2"></i> Sub-Category List
                         </a>
@@ -62,7 +62,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href=""
+                        <a href="{{ route('product.index') }}" wire:navigate
                             class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
                             <i class="fas fa-boxes w-4 mr-2"></i> Product List
                         </a>

@@ -8,8 +8,12 @@ class ProductFile extends Model
 {
     protected $table = 'product_files';
 
-    protected $fillable = ['product_id', 'file_path'];
+    protected $fillable = [
+        'product_id',
+        'file_path',
+    ];
 
+    // Relationships
     public function product()
     {
         return $this->belongsTo(Product::class);

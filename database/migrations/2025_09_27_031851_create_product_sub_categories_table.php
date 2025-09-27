@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Product;
+use App\Models\SubCategory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,15 +13,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_details', function (Blueprint $table) {
+        Schema::create('product_sub_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete();
-            $table->string('thumbnail');
-            $table->float('weight')->nullable();
-            $table->float('length')->nullable();
-            $table->float('width')->nullable();
-            $table->float('height')->nullable();
+            $table->foreignIdFor(SubCategory::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
+            $table->unique(['product_id', 'sub_category_id']);
+            $table->index(['product_id', 'sub_category_id']);
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_details');
+        Schema::dropIfExists('product_sub_categories');
     }
 };

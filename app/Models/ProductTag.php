@@ -14,4 +14,10 @@ class ProductTag extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    // Scopes
+    public function scopeByName($query, $name)
+    {
+        return $query->where('name', 'like', '%'.$name.'%');
+    }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\SubCategory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(SubCategory::class)->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('sku')->unique();
@@ -24,7 +22,7 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 
-            $table->index(['sub_category_id', 'status']);
+            $table->index(['status']);
         });
     }
 

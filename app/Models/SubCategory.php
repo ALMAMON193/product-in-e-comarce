@@ -21,7 +21,7 @@ class SubCategory extends Model
         'sort_order',
     ];
 
-    /** Relationships */
+    // Relationships
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -29,7 +29,18 @@ class SubCategory extends Model
 
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class, 'product_sub_category');
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
     }
 
     public static function boot()

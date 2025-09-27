@@ -11,11 +11,10 @@
         {{ $attributes->merge([
             'class' =>
                 'w-full px-4 py-3 border border-indigo-200 rounded-md focus:ring-1 focus:ring-green-500
-                                                                focus:border-transparent transition-all duration-300 bg-white hover:border-indigo-300
-                                                                placeholder-gray-400 resize-none ' .
-                ($error ? 'border-red-400 ring-1 ring-red-100' : ''),
+                        focus:border-transparent transition-all duration-300 bg-white hover:border-indigo-300
+                        placeholder-gray-400 resize-none ' . ($error ? 'border-red-400 ring-1 ring-red-100' : ''),
         ]) }}
-        wire:model.defer="{{ $wireModel }}"></textarea>
+        wire:model.live.debounce.500ms="{{ $wireModel }}"></textarea>
     @if ($error)
         <p class="text-red-500 text-sm mt-1 flex items-center animate-pulse">
             <i class="fas fa-exclamation-circle mr-1"></i> {{ $error }}

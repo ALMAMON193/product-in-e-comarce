@@ -9,8 +9,15 @@
                 </a>
             </li>
             <li><i class="fas fa-chevron-right text-xs text-gray-400"></i></li>
+            <li>
+                <a href="{{ route('product.index') }}"
+                    class="hover:text-indigo-600 flex items-center transition-colors duration-200">
+                    <i class="fas fa-boxes mr-2 text-indigo-500"></i>Products
+                </a>
+            </li>
+            <li><i class="fas fa-chevron-right text-xs text-gray-400"></i></li>
             <li class="text-gray-900 font-semibold flex items-center">
-                <i class="fas fa-boxes mr-2 text-indigo-500"></i>Create Product
+                <i class="fas fa-edit mr-2 text-indigo-500"></i>Edit Product
             </li>
         </ol>
     </nav>
@@ -80,7 +87,6 @@
                     <x-form.switch-toggle label="Featured Product" wireModel="is_featured" :error="$errors->first('is_featured')"
                         class="text-indigo-600" />
                 </div>
-
             </section>
 
             <!-- Pricing & Stock -->
@@ -118,15 +124,13 @@
                         ]"
                         class="border-gray-300 focus:ring-green-200 focus:border-green-200 rounded-lg" />
 
-
                     <x-form.input id="sort_order" type="number" label="Sort Order" wireModel="sort_order"
                         :error="$errors->first('sort_order')" placeholder="Enter sort order"
                         class="border-gray-300 focus:ring-green-500 focus:border-green-500 rounded-lg" />
                 </div>
-
             </section>
 
-            <!-- Additional Settings -->
+            <!-- File Uploads -->
             <section
                 class="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center space-x-4 pb-4 border-b border-gray-200">
@@ -138,19 +142,18 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-
-                    {{-- Thumbnail --}}
+                    <!-- Thumbnail -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-medium mb-2 flex items-center">
                             Thumbnail Image <span class="text-red-500 ml-1">*</span>
                             <i class="fas fa-info-circle ml-2 text-gray-400 hover:text-gray-600 cursor-help"
-                                title="Upload a thumbnail image for the project"></i>
+                                title="Upload a thumbnail image for the product"></i>
                         </label>
 
                         <label
                             class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors @error('thumbnail') border-red-500 @enderror">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                @if ($thumbnailUploading ?? false)
+                                @if ($thumbnailUploading)
                                     <div class="flex flex-col items-center">
                                         <div
                                             class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2">
@@ -169,7 +172,7 @@
                                 @endif
                             </div>
                             <input type="file" wire:model="thumbnail" accept="image/*" class="hidden"
-                                {{ $thumbnailUploading ?? false ? 'disabled' : '' }} />
+                                {{ $thumbnailUploading ? 'disabled' : '' }} />
                         </label>
 
                         @error('thumbnail')
@@ -183,7 +186,7 @@
                                 <img src="{{ $thumbnail->temporaryUrl() }}"
                                     class="w-32 h-32 object-cover rounded-lg border border-gray-200"
                                     alt="Thumbnail Preview">
-                                @if ($thumbnailCompleted ?? false)
+                                @if ($thumbnailCompleted)
                                     <div
                                         class="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1.5 border-2 border-white shadow-lg">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -194,19 +197,33 @@
                                     </div>
                                 @endif
                             </div>
+                            @if ($product && $product->thumbnail)
+                                <div class="mt-3 relative group">
+                                    <img src="{{ Storage::url($product->thumbnail) }}"
+                                        class="w-32 h-32 object-cover rounded-lg border border-gray-200"
+                                        alt="Existing Thumbnail">
+                                </div>
+                            @else
+                                <div class="mt-3 relative group">
+                                    <img src="https://via.placeholder.com/144"
+                                        class="w-32 h-32 object-cover rounded-lg border border-gray-200"
+                                        alt="Placeholder Thumbnail">
+                                </div>
+                            @endif
+
                         @endif
                     </div>
 
-                    {{-- Image Gallery --}}
+                    <!-- Image Gallery -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-medium mb-2 flex items-center">
                             Image Gallery (Max 20)
                             <i class="fas fa-info-circle ml-2 text-gray-400 hover:text-gray-600 cursor-help"
-                                title="Upload up to 20 images for the project gallery"></i>
+                                title="Upload up to 20 images for the product gallery"></i>
                         </label>
 
                         <label
-                            class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors @error('images.*') border-red-500 @enderror">
+                            class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors @error('files.*') border-red-500 @enderror">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                 @if (isset($imagesUploading) && in_array(true, $imagesUploading))
                                     <div class="flex flex-col items-center">
@@ -241,24 +258,48 @@
                             </p>
                         @enderror
 
-                        {{-- Preview gallery --}}
+                        <!-- Preview gallery -->
                         <div
                             class="mt-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+
+                            {{-- Existing Images --}}
+                            @php
+                                $existingImages = $product->images ? json_decode($product->images, true) : [];
+                            @endphp
+                            @foreach ($existingImages as $index => $img)
+                                <div class="relative group">
+                                    <img src="{{ Storage::url($img) }}"
+                                        class="w-full h-full object-cover rounded-lg border border-gray-300 shadow-sm"
+                                        alt="Gallery Image {{ $index + 1 }}"
+                                        onerror="this.src='https://via.placeholder.com/144'; console.log('Image load failed for index {{ $index }}');" />
+                                    <button type="button"
+                                        wire:click.prevent="removeExistingImage({{ $index }})"
+                                        class="absolute -top-2 -left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white hover:bg-gray-100 text-gray-700 rounded-full p-1.5 border border-gray-300 shadow-sm">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            @endforeach
+
+                            {{-- New Uploads --}}
                             @foreach ($files as $index => $img)
                                 <div class="relative group">
                                     @if ($img && method_exists($img, 'temporaryUrl'))
                                         <img src="{{ $img->temporaryUrl() }}"
                                             class="w-full h-full object-cover rounded-lg border border-gray-300 shadow-sm"
                                             alt="Gallery Image {{ $index + 1 }}"
-                                            onerror="this.src='https://via.placeholder.com/144'; console.log('Image load failed for index {{ $index }}');" />
+                                            onerror="this.src='https://via.placeholder.com/144';" />
                                     @else
                                         <img src="https://via.placeholder.com/144"
                                             class="w-full h-full object-cover rounded-lg border border-gray-300 shadow-sm"
                                             alt="Gallery Image {{ $index + 1 }}" />
                                     @endif
 
-                                    {{-- Uploading overlay for the first uploading image only --}}
-                                    @if (isset($imagesUploading) && in_array(true, $imagesUploading) && $imagesUploading[$index] && $loop->first)
+                                    {{-- Uploading overlay --}}
+                                    @if (isset($imagesUploading[$index]) && $imagesUploading[$index])
                                         <div
                                             class="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
                                             <div
@@ -284,19 +325,15 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
-                                        <span
-                                            class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                                            Remove
-                                        </span>
                                     </button>
                                 </div>
                             @endforeach
                         </div>
-
                     </div>
                 </div>
             </section>
-            <!-- ===== Product Tags Section ===== -->
+
+            <!-- Product Tags Section -->
             <section
                 class="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center space-x-4 pb-4 border-b border-gray-200">
@@ -463,11 +500,11 @@
                     class="px-8 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white transition-all duration-200 transform hover:scale-105 shadow-xl flex items-center font-semibold">
                     <span wire:loading.remove wire:target="save">
                         <i class="fas fa-save mr-2"></i>
-                        Save Product
+                        Update Product
                     </span>
                     <span wire:loading wire:target="save" class="flex items-center">
                         <i class="fas fa-spinner fa-spin mr-2"></i>
-                        Saving...
+                        Updating...
                     </span>
                 </button>
                 @if (!empty($selectedSubCategoriesMultiple))

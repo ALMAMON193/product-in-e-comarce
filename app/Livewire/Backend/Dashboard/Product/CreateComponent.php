@@ -2,12 +2,15 @@
 
 namespace App\Livewire\Backend\Dashboard\Product;
 
+use App\Helpers\Helper;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductDetail;
 use App\Models\ProductFile;
 use App\Models\ProductPricing;
 use App\Models\ProductTag;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -19,15 +22,13 @@ class CreateComponent extends Component
 
     public $categories;
 
-    public $subCategories; // keep if needed elsewhere
+    public $subCategories;
 
-    // Collapsible multi-category
     public $expandedCategories = [];
 
-    // tag
-    public $tags = ['']; // Initialize with one empty tag field
+    public $tags = [''];
 
-    public $selectedSubCategoriesMultiple = []; // [category_id => [sub_category_id, ...]]
+    public $selectedSubCategoriesMultiple = [];
 
     // Product fields
     public $name = '';
@@ -66,7 +67,6 @@ class CreateComponent extends Component
 
     public $sort_order = 0;
 
-    // Validation state tracking
     public $validationState = [];
 
     protected function rules()
@@ -84,14 +84,14 @@ class CreateComponent extends Component
             'length' => 'nullable|numeric|min:0|max:9999.99',
             'width' => 'nullable|numeric|min:0|max:9999.99',
             'height' => 'nullable|numeric|min:0|max:9999.99',
-            'tags' => 'required|array|min:4|max:20',
-            'tags.*' => 'nullable|string|max:255',
+            'tags' => 'required|array|min:1|max:20',
+            'tags.*' => 'required|string|max:255',
             'price' => 'nullable|numeric|min:0|max:999999.99',
             'sale_price' => 'nullable|numeric|min:0|max:999999.99|lt:price',
             'cost_price' => 'nullable|numeric|min:0|max:999999.99',
             'stock_quantity' => 'nullable|integer|min:0|max:999999',
             'stock_status' => 'required|in:in_stock,out_of_stock,preorder',
-            'files.*' => 'nullable|file|mimes:pdf,doc,docx,zip,rar|max:5120',
+            'files.*' => 'nullable|file|mimes:pdf,doc,docx,zip,rar,jpg,jpeg,png,gif|max:5120',
             'is_featured' => 'boolean',
             'sort_order' => 'nullable|integer|min:0|max:999999',
             'selectedSubCategoriesMultiple' => 'required|array|min:1',
@@ -101,15 +101,22 @@ class CreateComponent extends Component
     protected function messages()
     {
         return [
-            'tags.required' => 'At least four product tags are required.',
-            'tags.min' => 'Please provide at least four product tags.',
+            'tags.required' => 'At least one product tag is required.',
+            'tags.min' => 'Please provide at least one product tag.',
+            'tags.*.required' => 'Tag field cannot be empty.',
             'tags.*.max' => 'Each tag must not exceed 255 characters.',
+            'selectedSubCategoriesMultiple.required' => 'Please select at least one category.',
+            'selectedSubCategoriesMultiple.min' => 'Please select at least one category.',
         ];
     }
 
     public function mount()
     {
-        $this->categories = Category::where('status', 'active')->orderBy('sort_order')->orderBy('name')->get();
+        $this->categories = Category::where('status', 'active')
+            ->with('subCategories')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
         $this->subCategories = collect();
         $this->validationState = [];
     }
@@ -121,8 +128,18 @@ class CreateComponent extends Component
 
     public function removeTagField($index)
     {
-        unset($this->tags[$index]);
-        $this->tags = array_values($this->tags);
+        if (count($this->tags) > 1) {
+            unset($this->tags[$index]);
+            $this->tags = array_values($this->tags);
+        }
+    }
+
+    public function removeImageFile($index)
+    {
+        if (isset($this->files[$index])) {
+            unset($this->files[$index]);
+            $this->files = array_values($this->files);
+        }
     }
 
     public function toggleCategory($categoryId)
@@ -148,6 +165,11 @@ class CreateComponent extends Component
         } else {
             $this->selectedSubCategoriesMultiple[$categoryId][] = $subCategoryId;
         }
+
+        // Remove empty category arrays
+        if (empty($this->selectedSubCategoriesMultiple[$categoryId])) {
+            unset($this->selectedSubCategoriesMultiple[$categoryId]);
+        }
     }
 
     public function updatedName($value)
@@ -168,11 +190,43 @@ class CreateComponent extends Component
         }
     }
 
+    // Real-time validation methods
+    public function updatedSku()
+    {
+        $this->validateOnly('sku');
+    }
+
+    public function updatedPrice()
+    {
+        $this->validateOnly('price');
+    }
+
+    public function updatedSalePrice()
+    {
+        $this->validateOnly('sale_price');
+    }
+
+    public function updatedTags()
+    {
+        $this->validateOnly('tags');
+    }
+
     public function save()
     {
+        // Filter out empty tags
+        $this->tags = array_filter($this->tags, function ($tag) {
+            return trim($tag) !== '';
+        });
+
+        // Re-index array
+        $this->tags = array_values($this->tags);
+
         $this->validate();
 
         try {
+            DB::beginTransaction();
+
+            // Create the main product record (no sub_category_id needed)
             $product = Product::create([
                 'name' => $this->name,
                 'slug' => $this->slug,
@@ -180,19 +234,21 @@ class CreateComponent extends Component
                 'short_description' => $this->short_description ?? null,
                 'description' => $this->description ?? null,
                 'status' => 'active',
+                'is_featured' => $this->is_featured ?? false,
                 'sort_order' => $this->sort_order ?? 0,
             ]);
 
+            // Create product details
             ProductDetail::create([
                 'product_id' => $product->id,
-                'thumbnail' => $this->thumbnail ? $this->thumbnail->store('thumbnails', 'public') : null,
+                'thumbnail' => Helper::uploadFile('product_thumbnails', $this->thumbnail) ?? null,
                 'weight' => $this->weight,
                 'length' => $this->length,
                 'width' => $this->width,
                 'height' => $this->height,
-                'tags' => $this->tags,
             ]);
 
+            // Create product pricing
             ProductPricing::create([
                 'product_id' => $product->id,
                 'price' => $this->price ?? 0,
@@ -202,15 +258,17 @@ class CreateComponent extends Component
                 'stock_status' => $this->stock_status ?? 'in_stock',
             ]);
 
+            // Handle file uploads
             if (! empty($this->files)) {
                 foreach ($this->files as $file) {
                     ProductFile::create([
                         'product_id' => $product->id,
-                        'file_path' => $file->store('project_files', 'public'),
+                        'file_path' => $file->store('product_files', 'public'),
                     ]);
                 }
             }
 
+            // Create product tags
             if (! empty($this->tags)) {
                 foreach ($this->tags as $tag) {
                     if (trim($tag) !== '') {
@@ -222,19 +280,29 @@ class CreateComponent extends Component
                 }
             }
 
-            // Attach multiple category-subcategory pairs
-            foreach ($this->selectedSubCategoriesMultiple as $categoryId => $subCategoryIds) {
-                foreach ($subCategoryIds as $subCategoryId) {
-                    $product->categories()->attach($categoryId, ['sub_category_id' => $subCategoryId]);
+            // Handle subcategory relationships using many-to-many
+            if (! empty($this->selectedSubCategoriesMultiple)) {
+                $subCategoryIds = [];
+                foreach ($this->selectedSubCategoriesMultiple as $categoryId => $subCategoryIds_array) {
+                    foreach ($subCategoryIds_array as $subCategoryId) {
+                        $subCategoryIds[] = $subCategoryId;
+                    }
                 }
+
+                // Attach subcategories to product
+                $product->subCategories()->attach($subCategoryIds);
             }
+
+            DB::commit();
 
             session()->flash('message', 'Product created successfully!');
             $this->resetForm();
 
         } catch (\Exception $e) {
-            logger('Product creation error: '.$e->getMessage());
-            session()->flash('error', 'There was an error creating the product. Please try again.');
+            DB::rollback();
+            Log::error('Product creation error: '.$e->getMessage());
+            Log::error('Stack trace: '.$e->getTraceAsString());
+            session()->flash('error', 'There was an error creating the product: '.$e->getMessage());
         }
     }
 
@@ -250,7 +318,8 @@ class CreateComponent extends Component
         $this->stock_status = 'in_stock';
         $this->stock_quantity = 0;
         $this->sort_order = 0;
-        $this->tags = ['']; // Reset tags to array with one empty string
+        $this->tags = [''];
+        $this->is_featured = false;
 
         $this->resetErrorBag();
     }

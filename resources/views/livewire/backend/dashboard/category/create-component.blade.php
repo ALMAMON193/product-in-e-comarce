@@ -115,6 +115,7 @@
                             <x-form.switch-toggle label="Featured Category"
                                 wireModel="categories.{{ $index }}.is_featured" :checked="$category['is_featured'] ?? false" />
 
+
                             <x-form.input id="sort-order-{{ $index }}" label="Sort Order" icon="sort-numeric-up"
                                 type="number" wireModel="categories.{{ $index }}.sort_order"
                                 :error="$errors->first('categories.' . $index . '.sort_order')" />
