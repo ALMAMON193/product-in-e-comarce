@@ -67,9 +67,7 @@
             <table class="min-w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="px-4 lg:px-6 py-3 lg:py-4 text-left">
-                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        </th>
+
                         <th
                             class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Name
@@ -96,16 +94,14 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($subCategories as $item)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500">
-                                <input type="checkbox"
-                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            </td>
+
                             <td class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500">
                                 <div class="text-sm font-medium text-gray-600">{{ $item->name }}</div>
                             </td>
                             <td
                                 class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                                <div class="text-sm text-gray-600">{{ $item->description ?? '-' }}</div>
+                                <div class="text-sm text-gray-600">
+                                    {{ Str::limit($item->description, 100, '...') ?? '-' }}</div>
                             </td>
                             <td
                                 class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
@@ -120,12 +116,12 @@
                             </td>
                             <td class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-center text-sm font-medium">
                                 <div class="flex items-center justify-center space-x-2">
-                                    <a href="" wire:navigate
+                                    <a href="{{ route('sub.categories.edit', $item->slug) }}" wire:navigate
                                         class="text-indigo-600 hover:text-indigo-900 transition-colors p-1"
                                         title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="" wire:navigate
+                                    <a href="{{ route('sub.categories.view', $item->slug) }}" wire:navigate
                                         class="text-indigo-600 hover:text-indigo-900 transition-colors p-1"
                                         title="View">
                                         <i class="fas fa-eye"></i>

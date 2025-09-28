@@ -2,7 +2,7 @@
 <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 lg:hidden"></div>
 
 <!-- Mobile Menu Button -->
-<button id="mobileSidebarButton" class="lg:hidden p-3 text-gray-800 bg-gray-200 rounded-md fixed top-4 left-4 z-50 ">
+<button id="mobileSidebarButton" class="lg:hidden p-3 text-gray-800 bg-gray-200 rounded-md fixed top-4 left-4 z-50">
     <i class="fas fa-bars text-xl"></i>
 </button>
 
@@ -27,54 +27,81 @@
     <!-- Sidebar Navigation -->
     <nav class="flex-1 px-4 py-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
         <ul class="space-y-2">
-            <!-- Project Dropdown -->
+
+            {{-- Project Dropdown --}}
             <li class="nav-item">
+                @php
+                    // Check if any Project child route is active
+                    $projectActive =
+                        request()->routeIs('categories.*') ||
+                        request()->routeIs('sub.categories.*') ||
+                        request()->routeIs('product.*');
+                @endphp
+
+                <!-- Dropdown Trigger -->
                 <div class="flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 group
-                       text-gray-300 hover:text-white"
-                    onclick="toggleDropdown(this)">
+                    {{ $projectActive ? 'text-white bg-gray-700/40' : 'bg-gray-700 hover:text-white' }}"
+                    wire:navigate onclick="toggleDropdown(this)">
                     <i class="fas fa-box w-5 mr-4"></i>
                     <span class="font-medium flex-1">Project</span>
-                    <i class="fas fa-chevron-right ml-auto transition-transform duration-300 dropdown-icon"></i>
+                    <i
+                        class="fas fa-chevron-right ml-auto transition-transform duration-300 dropdown-icon {{ $projectActive ? 'rotate-90' : '' }}"></i>
                 </div>
-                <ul x-show="open" x-transition class="mt-1 ml-6 pl-4  border-gray-700/40 space-y-1 text-sm">
+
+                <!-- Dropdown Menu -->
+                <ul class="mt-1 ml-6 pl-4 border-gray-700/40 space-y-1 text-sm {{ $projectActive ? '' : 'hidden' }}"
+                    wire:navigate>
+                    <!-- Category List -->
                     <li>
                         <a href="{{ route('categories.index') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40
+                            {{ request()->routeIs('categories.index') ? 'bg-gray-700 text-white' : 'bg-gray-700 hover:text-white' }}">
                             <i class="fas fa-list w-4 mr-2"></i> Category List
                         </a>
                     </li>
+                    <!-- Add Category -->
                     <li>
                         <a href="{{ route('categories.create') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40
+                            {{ request()->routeIs('categories.create') ? 'bg-gray-700 text-white' : 'bg-gray-700 hover:text-white' }}">
                             <i class="fas fa-plus w-4 mr-2"></i> Add Category
                         </a>
                     </li>
+                    <!-- Sub-Category List -->
                     <li>
                         <a href="{{ route('sub.categories.index') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40
+                            {{ request()->routeIs('sub.categories.index') ? 'bg-gray-700 text-white' : 'bg-gray-700 hover:text-white' }}">
                             <i class="fas fa-list-alt w-4 mr-2"></i> Sub-Category List
                         </a>
                     </li>
+                    <!-- Add Sub-Category -->
                     <li>
                         <a href="{{ route('sub.categories.create') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40
+                            {{ request()->routeIs('sub.categories.create') ? 'bg-gray-700 text-white' : 'bg-gray-700 hover:text-white' }}">
                             <i class="fas fa-folder-plus w-4 mr-2"></i> Add Sub-Category
                         </a>
                     </li>
+                    <!-- Product List -->
                     <li>
                         <a href="{{ route('product.index') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40
+                            {{ request()->routeIs('product.index') ? 'bg-gray-700 text-white' : 'bg-gray-700 hover:text-white' }}">
                             <i class="fas fa-boxes w-4 mr-2"></i> Product List
                         </a>
                     </li>
+                    <!-- Add Product -->
                     <li>
                         <a href="{{ route('product.create') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40
+                            {{ request()->routeIs('product.create') ? 'bg-gray-700 text-white' : 'bg-gray-700 hover:text-white' }}">
                             <i class="fas fa-box w-4 mr-2"></i> Add Product
                         </a>
                     </li>
                 </ul>
             </li>
+
         </ul>
     </nav>
 
@@ -90,10 +117,10 @@
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-white truncate">Al Mamon</p>
-                <p class="text-xs text-gray-300 truncate">Administrator</p>
+                <p class="text-xs bg-gray-700 truncate">Administrator</p>
             </div>
             <button
-                class="text-gray-300 hover:text-red-400 transition-colors p-1 rounded opacity-0 group-hover:opacity-100">
+                class="bg-gray-700 hover:text-red-400 transition-colors p-1 rounded opacity-0 group-hover:opacity-100">
                 <i class="fas fa-sign-out-alt text-sm"></i>
             </button>
         </div>
@@ -122,9 +149,9 @@
     function toggleDropdown(el) {
         const dropdown = el.nextElementSibling;
         if (dropdown) {
-            dropdown.classList.toggle('hidden');
+            dropdown.classList.toggle('hidden'); // Show/hide dropdown
             const icon = el.querySelector('.dropdown-icon');
-            if (icon) icon.classList.toggle('rotate-90');
+            if (icon) icon.classList.toggle('rotate-90'); // Rotate chevron
         }
     }
 </script>

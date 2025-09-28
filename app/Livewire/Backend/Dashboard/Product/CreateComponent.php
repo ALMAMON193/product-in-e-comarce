@@ -22,8 +22,6 @@ class CreateComponent extends Component
 
     public $categories;
 
-    public $subCategories;
-
     public $expandedCategories = [];
 
     public $tags = [''];
@@ -66,8 +64,6 @@ class CreateComponent extends Component
     public $is_featured = false;
 
     public $sort_order = 0;
-
-    public $validationState = [];
 
     protected function rules()
     {
@@ -117,8 +113,6 @@ class CreateComponent extends Component
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
-        $this->subCategories = collect();
-        $this->validationState = [];
     }
 
     public function addTagField()
@@ -166,7 +160,6 @@ class CreateComponent extends Component
             $this->selectedSubCategoriesMultiple[$categoryId][] = $subCategoryId;
         }
 
-        // Remove empty category arrays
         if (empty($this->selectedSubCategoriesMultiple[$categoryId])) {
             unset($this->selectedSubCategoriesMultiple[$categoryId]);
         }
@@ -213,20 +206,16 @@ class CreateComponent extends Component
 
     public function save()
     {
-        // Filter out empty tags
-        $this->tags = array_filter($this->tags, function ($tag) {
+        // Remove empty tags and reindex
+        $this->tags = array_values(array_filter($this->tags, function ($tag) {
             return trim($tag) !== '';
-        });
-
-        // Re-index array
-        $this->tags = array_values($this->tags);
+        }));
 
         $this->validate();
 
         try {
             DB::beginTransaction();
 
-            // Create the main product record (no sub_category_id needed)
             $product = Product::create([
                 'name' => $this->name,
                 'slug' => $this->slug,
@@ -238,17 +227,15 @@ class CreateComponent extends Component
                 'sort_order' => $this->sort_order ?? 0,
             ]);
 
-            // Create product details
             ProductDetail::create([
                 'product_id' => $product->id,
-                'thumbnail' => Helper::uploadFile('product_thumbnails', $this->thumbnail) ?? null,
+                'thumbnail' => $this->thumbnail ? Helper::uploadFile('product_thumbnails', $this->thumbnail) : null,
                 'weight' => $this->weight,
                 'length' => $this->length,
                 'width' => $this->width,
                 'height' => $this->height,
             ]);
 
-            // Create product pricing
             ProductPricing::create([
                 'product_id' => $product->id,
                 'price' => $this->price ?? 0,
@@ -258,29 +245,30 @@ class CreateComponent extends Component
                 'stock_status' => $this->stock_status ?? 'in_stock',
             ]);
 
-            // Handle file uploads
+            // Handle file uploads (fixed: use $file)
             if (! empty($this->files)) {
                 foreach ($this->files as $file) {
                     ProductFile::create([
                         'product_id' => $product->id,
-                        'file_path' => $file->store('product_files', 'public'),
+                        'file_path' => $file ? Helper::uploadFile('image-gallery', $file) : null,
                     ]);
                 }
             }
 
-            // Create product tags
+            // Tags
             if (! empty($this->tags)) {
                 foreach ($this->tags as $tag) {
-                    if (trim($tag) !== '') {
+                    $tag = trim($tag);
+                    if ($tag !== '') {
                         ProductTag::create([
                             'product_id' => $product->id,
-                            'name' => trim($tag),
+                            'name' => $tag,
                         ]);
                     }
                 }
             }
 
-            // Handle subcategory relationships using many-to-many
+            // Subcategories (many-to-many attach)
             if (! empty($this->selectedSubCategoriesMultiple)) {
                 $subCategoryIds = [];
                 foreach ($this->selectedSubCategoriesMultiple as $categoryId => $subCategoryIds_array) {
@@ -288,15 +276,17 @@ class CreateComponent extends Component
                         $subCategoryIds[] = $subCategoryId;
                     }
                 }
-
-                // Attach subcategories to product
-                $product->subCategories()->attach($subCategoryIds);
+                if (! empty($subCategoryIds)) {
+                    $product->subCategories()->attach($subCategoryIds);
+                }
             }
 
             DB::commit();
 
             session()->flash('message', 'Product created successfully!');
             $this->resetForm();
+
+            $this->redirectRoute('product.index');
 
         } catch (\Exception $e) {
             DB::rollback();

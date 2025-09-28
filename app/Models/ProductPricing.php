@@ -19,10 +19,9 @@ class ProductPricing extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'sale_price' => 'decimal:2',
-        'cost_price' => 'decimal:2',
-        'stock_quantity' => 'integer',
+        'price' => 'float',
+        'sale_price' => 'float',
+        'cost_price' => 'float',
     ];
 
     // Relationships

@@ -122,27 +122,41 @@
                     @if ($product->productPricing)
                         <div>
                             <p class="text-sm text-gray-600 font-medium">Regular Price</p>
-                            <p class="text-base text-gray-900">${{ number_format($product->productPricing->price, 2) }}
+                            <p class="text-base text-gray-900">
+                                ${{ number_format($product->productPricing->price, 2) }}
                             </p>
                         </div>
+
                         <div>
                             <p class="text-sm text-gray-600 font-medium">Sale Price</p>
                             <p class="text-base text-gray-900">
-                                ${{ number_format($product->productPricing->sale_price ?? 'N/A', 2) }}</p>
+                                {{ $product->productPricing->sale_price !== null
+                                    ? '$' . number_format($product->productPricing->sale_price, 2)
+                                    : 'N/A' }}
+                            </p>
                         </div>
+
                         <div>
                             <p class="text-sm text-gray-600 font-medium">Cost Price</p>
                             <p class="text-base text-gray-900">
-                                ${{ number_format($product->productPricing->cost_price ?? 'N/A', 2) }}</p>
+                                {{ $product->productPricing->cost_price !== null
+                                    ? '$' . number_format($product->productPricing->cost_price, 2)
+                                    : 'N/A' }}
+                            </p>
                         </div>
+
                         <div>
                             <p class="text-sm text-gray-600 font-medium">Stock Quantity</p>
-                            <p class="text-base text-gray-900">{{ $product->productPricing->stock_quantity }}</p>
+                            <p class="text-base text-gray-900">
+                                {{ $product->productPricing->stock_quantity }}
+                            </p>
                         </div>
+
                         <div>
                             <p class="text-sm text-gray-600 font-medium">Stock Status</p>
                             <p class="text-base text-gray-900">
-                                {{ ucfirst(str_replace('_', ' ', $product->productPricing->stock_status)) }}</p>
+                                {{ ucfirst(str_replace('_', ' ', $product->productPricing->stock_status)) }}
+                            </p>
                         </div>
                     @else
                         <div class="md:col-span-3">
@@ -150,6 +164,7 @@
                         </div>
                     @endif
                 </div>
+
             </section>
 
             <!-- File Uploads -->
@@ -170,13 +185,12 @@
                         <!-- Thumbnail -->
                         <div>
                             <p class="text-sm text-gray-600 font-medium mb-2">Thumbnail Image</p>
-                            @if ($product->productDetails && $product->productDetails->thumbnail)
-                                <img src="{{ $product->productDetails->thumbnail }}" alt="{{ $product->name }}"
-                                    class="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-md hover:scale-105 transition-transform">
-                            @else
-                                <p class="text-gray-500 text-sm">No thumbnail available.</p>
-                            @endif
+                            <img src="{{ asset($product->productDetail?->thumbnail ?? 'placeholder.png') }}"
+                                alt="{{ $product->name }}"
+                                class="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-md hover:scale-105 transition-transform"
+                                onerror="this.src='https://via.placeholder.com/144'">
                         </div>
+
                         <!-- Image Gallery -->
                         <div>
                             <p class="text-sm text-gray-600 font-medium mb-2">Image Gallery</p>
@@ -185,12 +199,13 @@
                                     class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                     @foreach ($product->productFiles as $file)
                                         <div class="relative group">
-                                            <img src="{{ $file->file_path }}" alt="Product File"
+                                            <img src="{{ asset($file->file_path) }}" alt="Product File"
                                                 class="w-full h-32 object-cover rounded-lg border border-gray-300 shadow-sm cursor-pointer hover:scale-105 transition-transform"
-                                                @click="openLightbox = true; currentImage = '{{ $file->file_path }}'"
+                                                @click="openLightbox = true; currentImage = '{{ asset($file->file_path) }}'"
                                                 onerror="this.src='https://via.placeholder.com/144'">
                                         </div>
                                     @endforeach
+
                                     <!-- Lightbox -->
                                     <div x-show="openLightbox"
                                         class="lightbox fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
@@ -205,6 +220,7 @@
                         </div>
                     </div>
                 </div>
+
             </section>
 
             <!-- Product Tags -->
@@ -238,7 +254,8 @@
         </div>
 
         <!-- Right Side: Category Section -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 flex flex-col max-h-[600px]">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 flex flex-col max-h-[600px]"
+            style="height: fit-content;">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-xl font-bold text-gray-900 flex items-center">
                     <i class="fas fa-layer-group mr-2 text-indigo-600"></i>

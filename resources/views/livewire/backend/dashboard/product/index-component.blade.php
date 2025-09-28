@@ -67,9 +67,7 @@
             <table class="min-w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="px-4 lg:px-6 py-3 lg:py-4 text-left">
-                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        </th>
+
                         <th
                             class="px-4 lg:px-6 py-3 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Name</th>
@@ -94,11 +92,7 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($products as $product)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td
-                                class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                                <input type="checkbox"
-                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            </td>
+
                             <td
                                 class="px-4 lg:px-6 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                                 <div class="text-sm font-medium text-gray-600">{{ $product->name }}</div>

@@ -13,7 +13,8 @@
 
         <!-- Filters Sidebar -->
         <aside
-            class="w-full lg:w-80 rounded-2xl bg-white shadow-lg p-6 lg:sticky lg:top-20 overflow-hidden transition-all duration-300">
+            class="w-full lg:w-80 rounded-2xl bg-white shadow-lg p-6 lg:sticky lg:top-20 overflow-hidden transition-all duration-300"
+            style="height: fit-content;">
             <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Refine Your Selection</h3>
 
             <!-- Subcategories -->
@@ -184,11 +185,7 @@
             </div>
 
             <!-- Pagination -->
-            @if (!$products->isEmpty())
-                <div class="mt-10 flex justify-center">
-                    {{ $products->onEachSide(1)->links() }}
-                </div>
-            @endif
+            <x-form.pagination :paginator="$products" :pageRange="$pageRange" />
         </main>
     </div>
 </div>
