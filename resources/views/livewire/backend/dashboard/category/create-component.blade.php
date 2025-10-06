@@ -24,7 +24,6 @@
             </p>
         </div>
     @endif
-
     <!-- Form -->
     <form wire:submit.prevent="save" class="space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
@@ -44,12 +43,10 @@
                         {{ count($categories) }} {{ count($categories) === 1 ? 'Category' : 'Categories' }}
                     </div>
                 </div>
-
                 <!-- Dynamic Categories -->
                 @foreach ($categories as $index => $category)
                     <div wire:key="category-{{ $index }}"
                         class="mb-8 bg-gradient-to-r from-gray-50/80 to-blue-50/50 rounded-xl p-6 border border-gray-200/60 shadow-sm hover:shadow-md transition-all duration-300 space-y-6">
-
                         <!-- Header + Remove -->
                         <div class="flex items-center justify-between pb-4 border-b border-gray-200/60">
                             <div class="flex items-center space-x-3">
@@ -66,15 +63,12 @@
                                 </button>
                             @endif
                         </div>
-
                         <!-- Title -->
                         <x-form.input id="name-{{ $index }}" label="Title *" icon="tag"
                             wireModel="categories.{{ $index }}.name" :error="$errors->first('categories.' . $index . '.name')" />
-
                         <!-- Description -->
                         <x-form.textarea id="description-{{ $index }}" label="Description" icon="align-left"
                             wireModel="categories.{{ $index }}.description" :error="$errors->first('categories.' . $index . '.description')" />
-
                         <!-- Image Upload -->
                         <div class="mb-6">
                             <label class="block text-gray-700 font-medium mb-2 flex items-center">
@@ -82,7 +76,6 @@
                                 <i class="fas fa-info-circle ml-2 text-gray-400 hover:text-gray-600 cursor-help"
                                     title="Upload an image for the project"></i>
                             </label>
-
                             <label
                                 class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors @error('categories.' . $index . '.image') border-red-500 @enderror">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6">

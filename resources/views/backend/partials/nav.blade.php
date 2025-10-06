@@ -2,7 +2,7 @@
 <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 lg:hidden"></div>
 
 <!-- Mobile Menu Button -->
-<button id="mobileSidebarButton" class="lg:hidden p-3 text-gray-800 bg-gray-200 rounded-md fixed top-4 left-4 z-50 ">
+<button id="mobileSidebarButton" class="lg:hidden p-3 text-gray-800 bg-gray-200 rounded-md fixed top-4 left-4 z-50">
     <i class="fas fa-bars text-xl"></i>
 </button>
 
@@ -10,75 +10,90 @@
 <aside id="sidebar"
     class="fixed lg:static top-0 left-0 w-64 h-full bg-gradient-to-b from-gray-900 to-gray-800 text-white shadow-2xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50 flex flex-col">
 
-    <!-- Logo Section -->
-    <div class="p-6 border-b border-gray-700/50">
-        <div class="flex items-center space-x-4">
-            <div
-                class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <i class="fas fa-tachometer-alt text-white text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold text-white tracking-tight">AdminPanel</h1>
-                <p class="text-sm text-gray-300">v2.1</p>
-            </div>
+    <!-- Logo -->
+    <div class="p-6 border-b border-gray-700/50 flex items-center space-x-4">
+        <div
+            class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-tachometer-alt text-white text-xl"></i>
+        </div>
+        <div>
+            <h1 class="text-xl font-bold">AdminPanel</h1>
+            <p class="text-sm text-gray-300">v2.1</p>
         </div>
     </div>
 
-    <!-- Sidebar Navigation -->
+    <!-- Navigation -->
     <nav class="flex-1 px-4 py-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
         <ul class="space-y-2">
+
             <!-- Project Dropdown -->
-            <li class="nav-item">
-                <div class="flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 group
-                       text-gray-300 hover:text-white"
+            <li>
+                <button class="flex items-center w-full px-4 py-3 rounded-lg text-gray-300 hover:text-white"
                     onclick="toggleDropdown(this)">
                     <i class="fas fa-box w-5 mr-4"></i>
-                    <span class="font-medium flex-1">Project</span>
-                    <i class="fas fa-chevron-right ml-auto transition-transform duration-300 dropdown-icon"></i>
-                </div>
-                <ul x-show="open" x-transition class="mt-1 ml-6 pl-4  border-gray-700/40 space-y-1 text-sm">
-                    <li>
-                        <a href="{{ route('categories.index') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
-                            <i class="fas fa-list w-4 mr-2"></i> Category List
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('categories.create') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
-                            <i class="fas fa-plus w-4 mr-2"></i> Add Category
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('sub.categories.index') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
-                            <i class="fas fa-list-alt w-4 mr-2"></i> Sub-Category List
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('sub.categories.create') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
-                            <i class="fas fa-folder-plus w-4 mr-2"></i> Add Sub-Category
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('product.index') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
-                            <i class="fas fa-boxes w-4 mr-2"></i> Product List
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('product.create') }}" wire:navigate
-                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white">
-                            <i class="fas fa-box w-4 mr-2"></i> Add Product
-                        </a>
-                    </li>
+                    <span class="flex-1 text-left font-medium">Project</span>
+                    <i class="fas fa-chevron-right ml-auto transition-transform dropdown-icon"></i>
+                </button>
+                <ul class="hidden mt-1 ml-6 pl-4 border-l border-gray-700/40 space-y-1 text-sm">
+                    <li><a wire:navigate href="{{ route('categories.index') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-list w-4 mr-2"></i> Category List</a></li>
+                    <li><a wire:navigate href="{{ route('categories.create') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-plus w-4 mr-2"></i> Add Category</a></li>
+                    <li><a wire:navigate href="{{ route('sub.categories.index') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-list-alt w-4 mr-2"></i> Sub-Category List</a></li>
+                    <li><a wire:navigate href="{{ route('sub.categories.create') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-folder-plus w-4 mr-2"></i> Add Sub-Category</a></li>
+                    <li><a wire:navigate href="{{ route('product.index') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-boxes w-4 mr-2"></i> Product List</a></li>
+                    <li><a wire:navigate href="{{ route('product.create') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-box w-4 mr-2"></i> Add Product</a></li>
+                </ul>
+            </li>
+
+            <!-- Table Dropdown -->
+            <li>
+                <button class="flex items-center w-full px-4 py-3 rounded-lg text-gray-300 hover:text-white"
+                    onclick="toggleDropdown(this)">
+                    <i class="fas fa-box w-5 mr-4"></i>
+                    <span class="flex-1 text-left font-medium">Table</span>
+                    <i class="fas fa-chevron-right ml-auto transition-transform dropdown-icon"></i>
+                </button>
+                <ul class="hidden mt-1 ml-6 pl-4 border-l border-gray-700/40 space-y-1 text-sm">
+                    <li><a wire:navigate href="{{ route('categories.index') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-list w-4 mr-2"></i> Basic Table</a></li>
+                    <li><a wire:navigate href="{{ route('categories.create') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-plus w-4 mr-2"></i> Data Table</a></li>
+                </ul>
+            </li>
+            <!-- From Dropdown -->
+            <li>
+                <button class="flex items-center w-full px-4 py-3 rounded-lg text-gray-300 hover:text-white"
+                    onclick="toggleDropdown(this)">
+                    <i class="fas fa-box w-5 mr-4"></i>
+                    <span class="flex-1 text-left font-medium">From</span>
+                    <i class="fas fa-chevron-right ml-auto transition-transform dropdown-icon"></i>
+                </button>
+                <ul class="hidden mt-1 ml-6 pl-4 border-l border-gray-700/40 space-y-1 text-sm">
+                    <li><a wire:navigate href="{{ route('categories.index') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-list w-4 mr-2"></i> Basic Table</a></li>
+                    <li><a wire:navigate href="{{ route('categories.create') }}"
+                            class="flex items-center px-3 py-2 rounded-md hover:bg-gray-700/40 text-gray-300 hover:text-white"><i
+                                class="fas fa-plus w-4 mr-2"></i> Data Table</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
 
-    <!-- User Profile Section -->
+    <!-- Profile -->
     <div class="p-4 border-t border-gray-700/50 mt-auto">
         <div
             class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-indigo-600/20 transition-all duration-300 group">
@@ -92,39 +107,35 @@
                 <p class="text-sm font-semibold text-white truncate">Al Mamon</p>
                 <p class="text-xs text-gray-300 truncate">Administrator</p>
             </div>
-            <button
-                class="text-gray-300 hover:text-red-400 transition-colors p-1 rounded opacity-0 group-hover:opacity-100">
+            <button class="text-gray-300 hover:text-red-400 transition-colors p-1 opacity-0 group-hover:opacity-100">
                 <i class="fas fa-sign-out-alt text-sm"></i>
             </button>
         </div>
     </div>
 </aside>
 
-<!-- JS for Sidebar & Dropdowns -->
+<!-- JS -->
 <script>
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
     const mobileButton = document.getElementById('mobileSidebarButton');
 
-    // Mobile sidebar toggle
+    // Mobile toggle
     mobileButton.addEventListener('click', () => {
         sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
     });
 
-    // Overlay click closes sidebar
     overlay.addEventListener('click', () => {
         sidebar.classList.add('-translate-x-full');
         overlay.classList.add('hidden');
     });
 
     // Dropdown toggle
-    function toggleDropdown(el) {
-        const dropdown = el.nextElementSibling;
-        if (dropdown) {
-            dropdown.classList.toggle('hidden');
-            const icon = el.querySelector('.dropdown-icon');
-            if (icon) icon.classList.toggle('rotate-90');
-        }
+    function toggleDropdown(btn) {
+        const menu = btn.nextElementSibling;
+        menu.classList.toggle('hidden');
+        const icon = btn.querySelector('.dropdown-icon');
+        icon.classList.toggle('rotate-90');
     }
 </script>
